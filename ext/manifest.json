@@ -1,12 +1,12 @@
 {
   "name": "Omnicat"
-, "version": "1.0"
+, "version": "1.0.1"
 , "description": "Autocomplete GitHub repositories in Omnibox"
 , "icons": {
     "16":  "github_icon.png"
   , "48":  "icon48.png"
   , "128": "icon128.png" }
-, "homepage_url": "https://github.com/lackac/github_autocomplete"
+, "homepage_url": "http://omnicat.icanscale.com"
 , "omnibox": { "keyword": "gh" }
 , "background_page": "background.html"
 , "permissions": [ "tabs", "https://lackac.cloudant.com/" ]
