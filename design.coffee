@@ -13,16 +13,16 @@ module.exports =
 
         # emit all prefixes of name
         for c, i in doc.name
-          emit [doc.name.substr(0, i), doc.watchers], doc.description
+          emit [doc.name.substr(0, i+1), doc.watchers], doc.description
 
         # emit all prefixes of owner
         for c, i in doc.owner
-          prefix = doc.owner.substr(0, i)
+          prefix = doc.owner.substr(0, i+1)
           emit [prefix, doc.watchers], doc.description
 
           # emit all combined prefixes
           for d, j in doc.name
-            emit [prefix + '/' + doc.name.substr(0,j), doc.watchers], doc.description
+            emit [prefix + '/' + doc.name.substr(0, j+1), doc.watchers], doc.description
 
   lists:
     complete: (head, req) ->
