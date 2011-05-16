@@ -65,6 +65,14 @@ task 'trigger', ->
   logStatus()
 , true
 
+desc "Build zip for Chrome Web Store"
+task 'build', ->
+  spawn = require('child_process').spawn 'zip', ['-r', 'omnicat.zip', 'ext']
+  spawn.stderr.on 'data', (data) -> process.stderr.write(data)
+  spawn.stdout.on 'data', (data) -> process.stdout.write(data)
+  spawn.on 'exit', complete
+, true
+
 
 updateRepos = (db, repos, callback) ->
   ids = repos.map (repo) -> "#{repo.owner}:#{repo.name}"
