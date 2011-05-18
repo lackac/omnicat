@@ -1,4 +1,4 @@
-var currentRequest = null;
+var currentRequest = null, topResult, currentResults;
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
   if (currentRequest != null) {
@@ -12,17 +12,24 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 
   currentRequest = complete(text, function(lines) {
     lines = lines.split("\n");
-    var results = [];
+    topResult = null;
+    currentResults = [];
 
     for (var i = 0, line; i < lines.length && (line = lines[i]); i++) {
       var _parts = line.split(" "),
           path = _parts.shift(), watchers = _parts.shift(), description = _parts.join(" ");
-          description = '<url>' + path + '</url> <dim>' + watchers + '</dim> <dim>' + description + '</dim>';
 
-      results.push({ content: path, description: description });
+      description = '<match>' + path + '</match> <dim>' + watchers + '</dim> <dim>' + description + '</dim>';
+
+      if (i === 0) {
+        topResult = path;
+        updateDefaultSuggestion(description);
+      } else {
+        currentResults.push({ content: path, description: description });
+      }
     }
 
-    suggest(results);
+    suggest(currentResults);
   });
 });
 
@@ -34,24 +41,15 @@ function resetDefaultSuggestion() {
 
 resetDefaultSuggestion();
 
-function updateDefaultSuggestion(query) {
-  query = query.replace(/^\/|\/$/g, '');
-  var _parts = query.split("/"), owner = _parts[0], repo = _parts[1], othermatch = '';
-  if (!owner && !repo) {
-    owner = 'owner'; repo = 'repo';
-  } else if (!repo) {
-    repo = owner + '*'; owner = '*';
-    othermatch = ' <dim>|</dim> <match>' + repo + '/' + owner + '</match>';
-  } else {
-    repo += '*';
-    owner += '*';
-  }
+function updateDefaultSuggestion(suggestion) {
   chrome.omnibox.setDefaultSuggestion({
-    description: '<url><match>https://github.com/</match></url> <match>' + owner + '/' + repo + '</match>' + othermatch
+    description: '<url><match>https://github.com/</match></url>' + (suggestion || '<match>owner/repo</match>')
   });
 }
 
 chrome.omnibox.onInputStarted.addListener(function() {
+  topResult = null;
+  currentResults = [];
   updateDefaultSuggestion('');
 });
 
@@ -86,5 +84,10 @@ function navigate(url) {
 }
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
-  navigate(getUrl(text));
+  for (var i = 0; i < currentResults.length; i++) {
+    if (currentResults[i].content === text) {
+      return navigate(getUrl(text));
+    }
+  }
+  navigate(getUrl(topResult || "search"));
 });
