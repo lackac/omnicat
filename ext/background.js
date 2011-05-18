@@ -76,7 +76,7 @@ chrome.omnibox.onInputCancelled.addListener(function() {
 function complete(query, callback) {
   query = query.replace(/^\/|\/$/g, '').toLowerCase();
   var url = DB + '/_design/repos/_list/complete/by_prefix' +
-    '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=5&stale=ok';
+    '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=6&stale=ok';
 
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
