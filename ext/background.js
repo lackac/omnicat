@@ -1,4 +1,20 @@
-var currentRequest = null, topResult, currentResults;
+var currentRequest = null, topResult, currentResults,
+    DB, defaultDB = "https://lackac.cloudant.com/gh-repos";
+
+if (localStorage.DB) DB = localStorage.DB;
+if (!DB || DB === "default") DB = defaultDB;
+
+function toggleDevMode() {
+  localStorage.devMode = localStorage.devMode === "on" ? "off" : "on";
+  if (localStorage.devMode === "on") {
+    localStorage.DB = DB = "http://localhost:5984/gh-repos";
+    return "enabled";
+  } else {
+    localStorage.DB = "default";
+    DB = defaultDB;
+    return "disabled";
+  }
+}
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
   if (currentRequest != null) {
@@ -58,8 +74,8 @@ chrome.omnibox.onInputCancelled.addListener(function() {
 });
 
 function complete(query, callback) {
-  query = query.replace(/^\/|\/$/g, '');
-  var url = 'https://lackac.cloudant.com/gh-repos/_design/repos/_list/complete/by_prefix' +
+  query = query.replace(/^\/|\/$/g, '').toLowerCase();
+  var url = DB + '/_design/repos/_list/complete/by_prefix' +
     '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=5&stale=ok';
 
   var req = new XMLHttpRequest();

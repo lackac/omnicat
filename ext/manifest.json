@@ -9,5 +9,5 @@
 , "homepage_url": "http://omnicat.icanscale.com"
 , "omnibox": { "keyword": "gh" }
 , "background_page": "background.html"
-, "permissions": [ "tabs", "https://lackac.cloudant.com/" ]
+, "permissions": [ "tabs", "https://lackac.cloudant.com/", "http://localhost/" ]
 }
