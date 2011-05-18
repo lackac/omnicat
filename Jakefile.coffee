@@ -73,6 +73,19 @@ task 'build', ->
   spawn.on 'exit', complete
 , true
 
+desc "Open an interactive console with REPL"
+task 'console', ->
+  unless process.env['_'].match(/\/rlwrap$/)
+    console.log "I suggest you use rlwrap and create an alias with it like this:"
+    console.log "alias repl='NODE_NO_READLINE=1 rlwrap -w-40 -p Green -C node jake console'"
+    # FIXME: output coloring doesn't work for some reason when run through rlwrap
+
+  repl = require "repl"
+  csl = repl.start()
+  global.emit = (k,v) -> console.log(k,v)
+  csl.context.ddoc = ddoc = require "./design"
+  for name,view of ddoc.views
+    csl.context[name] = view.map
 
 updateRepos = (db, repos, callback) ->
   ids = repos.map (repo) -> "#{repo.owner}:#{repo.name}"
