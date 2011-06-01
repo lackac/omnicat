@@ -6,7 +6,7 @@ module.exports =
     by_watchers:
       map: (doc) -> emit doc.watchers, doc.description if doc.watchers
     by_language:
-      map: (doc) -> emit doc.languange, doc.description if doc.languange
+      map: (doc) -> emit doc.language, doc.description if doc.language
     by_prefix:
       map: (doc) ->
         return unless doc.type is "repo"
