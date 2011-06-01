@@ -96,18 +96,25 @@ task 'console', ->
   for name,view of ddoc.views
     csl.context[name] = view.map
 
+repoDoc = (repo) ->
+  doc =
+    _id: "#{repo.owner}:#{repo.name}"
+  for key in ['owner', 'name', 'description', 'language', 'homepage', 'watchers', 'forks', 'fork', 'created_at', 'pushed_at']
+    doc[key] = repo[key]
+  doc
+
 updateRepos = (db, repos, callback) ->
   ids = repos.map (repo) -> "#{repo.owner}:#{repo.name}"
   db.get ids, (err, rows) ->
     callback(err) if err
     bulk_docs = []
     for row, i in rows
-      repos[i]._id = ids[i]
+      repo_doc = repoDoc(repos[i])
       if row.error == "not_found" or not row.doc
-        bulk_docs.push(repos[i])
-      else if needsUpdate(row.doc, repos[i])
-        repos[i]._rev = row.doc._rev
-        bulk_docs.push(repos[i])
+        bulk_docs.push(repo_doc)
+      else if needsUpdate(row.doc, repo_doc)
+        repo_doc._rev = row.doc._rev
+        bulk_docs.push(repo_doc)
     db.save bulk_docs, (err, docs) -> callback(err, docs)
 
 needsUpdate = (doc, repo) ->

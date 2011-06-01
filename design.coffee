@@ -6,7 +6,7 @@ exports.repos =
       map: (doc) -> emit doc.language, doc.description if doc.language
     by_prefix:
       map: (doc) ->
-        return unless doc.type is "repo"
+        return unless doc.owner and doc.name
 
         # emit all prefixes of name
         for c, i in doc.name
