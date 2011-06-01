@@ -1,7 +1,4 @@
-module.exports =
-  _id: '_design/repos'
-  languange: 'javascript'
-
+exports.repos =
   views:
     by_watchers:
       map: (doc) -> emit doc.watchers, doc.description if doc.watchers

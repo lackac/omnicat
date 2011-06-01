@@ -1,15 +1,15 @@
 {print} = require 'sys'
 http = require 'http'
-{whilst} = require 'async'
+{whilst, forEach} = require 'async'
 ProgressBar = require 'progress'
 
 desc "Fetch GitHub repos that have more than 1 watcher"
-task 'fetch', (n) ->
+task 'fetch', (n, page) ->
   {db} = getDB()
   n = parseInt(n ? 500)
-  progress = new ProgressBar "[:bar] :percent (:elapseds)", total: n, width: 60
+  page = parseInt(page ? 1)
+  progress = new ProgressBar "[:bar] :percent (:elapseds)", total: n-page-1, width: 60
   console.log "Fetching repo information..."
-  page = 1
   whilst (-> page <= n),
     (next) ->
       getSearchPage page++, (err, repos) ->
@@ -23,44 +23,53 @@ task 'fetch', (n) ->
       complete()
 , true
 
-desc "Push design doc to the database"
+desc "Push design docs to the database"
 task 'design', ->
   {couch, db} = getDB()
-  ddoc = require './design.coffee'
-  for name, view of ddoc.views
-    for key, fun of view
-      view[key] = fun.toString().replace(/\n +/g, '')
-  for key, fun of ddoc.lists
-    ddoc.lists[key] = fun.toString().replace(/\n +/g, '')
+  ddocs = require './design.coffee'
+  forEach Object.keys(ddocs), (id, next) ->
+    ddoc = ddocs[id]
+    ddoc._id = "_design/#{id}"
+    ddoc.language = 'javascript'
+    for name, view of ddoc.views
+      for key, fun of view
+        view[key] = fun.toString().replace(/\n +/g, '')
+    if ddoc.lists
+      for key, fun of ddoc.lists
+        ddoc.lists[key] = fun.toString().replace(/\n +/g, '')
 
-  console.log "Pushing design doc #{ddoc._id}..."
-  db.get ddoc._id, (err, doc) ->
-    if err and err.error != "not_found"
-      console.log(err)
-      complete()
-    else
-      ddoc._rev = doc._rev if doc
-      db.save ddoc._id, ddoc, (err, doc) ->
-        console.log(err) if err
-        complete()
+    db.get ddoc._id, (err, doc) ->
+      if err and err.error != "not_found"
+        next(err)
+      else
+        ddoc._rev = doc._rev if doc
+        db.save ddoc._id, ddoc, (err, doc) ->
+          console.log "Saved design doc '#{id}'" if doc
+          next(err)
+  , (err) ->
+    console.log(err) if err
+    complete()
 , true
 
 desc "Trigger view indexing"
 task 'trigger', ->
   {couch, db} = getDB()
   console.log "Triggering view indexing..."
-  ddoc = require './design.coffee'
+  ddocs = require './design.coffee'
   completed = false
-  db.view 'repos/by_watchers', limit: 1, (err, res) ->
-    completed = true
+  forEach Object.keys(ddocs), (id, next) ->
+    ddoc = ddocs[id]
+    for view of ddoc.views
+      break
+    db.view "#{id}/#{view}", {limit: 1}, next
+  , (err) ->
     console.log(err) if err
+    completed = true
     complete()
-  taskRe = new RegExp("#{db.name}.* #{ddoc._id}$")
   logStatus = ->
     couch.activeTasks (err, tasks) ->
       if tasks
-        for {task, status} in tasks when taskRe.test(task)
-          console.log(status)
+        console.log(status) for {task, status} in tasks
       setTimeout(logStatus, 2000) unless completed
   logStatus()
 , true
