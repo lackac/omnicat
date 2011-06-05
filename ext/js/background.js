@@ -56,9 +56,13 @@ function resetDefaultSuggestion() {
 resetDefaultSuggestion();
 
 function updateDefaultSuggestion(suggestion) {
-  chrome.omnibox.setDefaultSuggestion({
-    description: '<url><match>https://github.com/</match></url>' + (suggestion || '<match>owner/repo</match>')
-  });
+  if (suggestion) {
+    chrome.omnibox.setDefaultSuggestion({ description: suggestion });
+  } else {
+    chrome.omnibox.setDefaultSuggestion({
+      description: '<url><match>https://github.com/</match></url> <match>owner/repo</match>'
+    });
+  }
 }
 
 chrome.omnibox.onInputStarted.addListener(function() {
