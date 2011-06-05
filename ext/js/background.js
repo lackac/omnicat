@@ -26,7 +26,6 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
   if (text == '') return;
 
   currentRequest = complete(text, function(lines) {
-    lines = lines.split("\n");
     topResult = null;
     currentResults = [];
 
@@ -75,9 +74,20 @@ chrome.omnibox.onInputCancelled.addListener(function() {
 function complete(query, callback) {
   query = query.replace(/^\/|\/$/g, '').toLowerCase();
   var url = DB + '/_design/repos/_list/complete/by_prefix' +
-    '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=6&stale=ok';
+    '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=10&stale=ok';
 
-  return $.get(url, callback);
+  return $.get(url, function(lines) {
+    lines = lines.split("\n");
+    var uniqLines = [], lookup = {};
+    lines.forEach(function(line) {
+      var match = line.match(/^\*?([^ ]+) /), id = match && match[1];
+      if (id && !lookup[id]) {
+        lookup[id] = true;
+        uniqLines.push(line);
+      }
+    });
+    callback(uniqLines);
+  });
 }
 
 function getUrl(path) {
