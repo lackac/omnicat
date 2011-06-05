@@ -18,7 +18,6 @@ function toggleDevMode() {
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
   if (currentRequest != null) {
-    currentRequest.onreadystatechange = null;
     currentRequest.abort();
     currentRequest = null;
   }
@@ -78,15 +77,7 @@ function complete(query, callback) {
   var url = DB + '/_design/repos/_list/complete/by_prefix' +
     '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=6&stale=ok';
 
-  var req = new XMLHttpRequest();
-  req.open("GET", url, true);
-  req.onreadystatechange = function() {
-    if (req.readyState == 4) {
-      callback(req.responseText);
-    }
-  }
-  req.send(null);
-  return req;
+  return $.get(url, callback);
 }
 
 function getUrl(path) {
