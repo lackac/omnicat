@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Omnicat Options</title>
+  <link rel="stylesheet" href="css/options.css" type="text/css" media="screen" charset="utf-8">
+  <script src="js/zepto.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/github.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/options.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<script type="text/javascript"></script>
+
+<body>
+  <div class="containter">
+    <h2><img src="images/icon48.png" alt="Omnicat"/> Omnicat Options</h2>
+    <div id="options">
+      <label>
+        <input type="checkbox" id="include-private"/>
+        Include your private repositories
+      </label>
+      <div id="github">
+        <label for="login">Username:</label>
+        <input type="text" id="login"/>
+        <label for="token">Token:</label>
+        <input type="text" id="token"/>
+        <div id="token-validator"></div>
+        <p class="hint">find it on GitHub on your <a href="https://github.com/account/admin" target="_blank">Account Admin page</a>.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html

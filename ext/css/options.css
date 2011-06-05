@@ -1,0 +1,65 @@
+body {
+  font: 14pt Helvetica, Arial, sans-serif;
+  color: #555;
+  background-color: #ddd;
+}
+
+.container {
+  position: relative;
+  margin: 0 auto;
+  width: 480px;
+}
+
+h2 {
+  margin: 25px 0 0;
+  text-align: center;
+  font-size: 2em;
+}
+
+#options {
+  margin: 25px auto 0;
+  padding: 25px;
+  width: 430px;
+  text-align: left;
+  background-color: #fff;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: 2px 2px 10px #ccc;
+}
+#options:after { visibility: hidden; display: block; font-size: 0; content: " "; clear: both; height: 0; }
+
+#github label {
+  float: left;
+  clear: left;
+  margin: 1em 0 0;
+  width: 100px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+#github input {
+  float: left;
+  margin: 1em 0 0;
+  border: 1px solid #cacaca;
+  -webkit-border-radius: 5px;
+  padding: 0.5em;
+  width: 240px;
+  color: #444;
+  background-color: #eaeaea;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ffffff), color-stop(1.0, #eaeaea));
+}
+
+#token-validator {
+  float: left;
+  margin: 0.75em 0 0 0.5em;
+}
+
+#github .hint {
+  clear: both;
+  margin-left: 100px;
+  padding-top: 0.5em;
+  font-size: 0.8em;
+  color: #aaa;
+}
+#github .hint a { color: #aaa; }
+
+#github { display: none; }
