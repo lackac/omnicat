@@ -15,12 +15,8 @@ $(function() {
         tokenValidator = $('#token-validator');
     if (login && token) {
       tokenValidator.html('<img src="images/loading.gif"/>');
-      GitHub.updateCredentials(login, token, function(success) {
-        if (success) {
-          tokenValidator.html('<img src="images/success.gif"/>');
-        } else {
-          tokenValidator.html('<img src="images/error.gif"/>');
-        }
+      GitHub.updateCredentials(login, token, function(err) {
+        tokenValidator.html('<img src="images/' + (err ? 'error' : 'success') + '.gif"/>');
       });
     }
   });

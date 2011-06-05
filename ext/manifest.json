@@ -10,5 +10,5 @@
 , "omnibox": { "keyword": "gh" }
 , "background_page": "background.html"
 , "options_page": "options.html"
-, "permissions": [ "tabs", "https://lackac.cloudant.com/", "http://localhost/" ]
+, "permissions": [ "tabs", "https://lackac.cloudant.com/", "https://github.com/", "http://localhost/" ]
 }

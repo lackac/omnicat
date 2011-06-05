@@ -1,22 +1,33 @@
 (function() {
 
 window.GitHub = {
-  updateCredentials: function(login, token, callback) {
-    var t;
-    localStorage.githubLogin = localStorage.githubToken = "";
-    $.ajax({
-      url: 'https://github.com/api/v2/json/user/show?login='+login+'&token='+token+'&callback=?',
-      dataType: 'json',
-      success: function(data) {
-        if (t) {
-          clearTimeout(t);
-          localStorage.githubLogin = login;
-          localStorage.githubToken = token;
-          callback(true);
-        }
+  request: function(path, login, token, callback) {
+    if (typeof login == "function") {
+      callback = login;
+      if (localStorage.githubLogin && localStorage.githubToken) {
+        login = localStorage.githubLogin;
+        token = localStorage.githubToken;
+      } else {
+        return callback("no token");
       }
+    }
+    $.ajax({
+      url: 'https://github.com/api/v2/json/'+path+'?login='+login+'&token='+token,
+      dataType: 'json',
+      success: function(data) { callback(null, data); },
+      error: function(xhr, error) { callback(error); }
     });
-    t = setTimeout(function() { callback(false); }, 3000);
+  },
+
+  updateCredentials: function(login, token, callback) {
+    localStorage.githubLogin = localStorage.githubToken = "";
+    this.request('user/show', login, token, function(err, data) {
+      if (!err) {
+        localStorage.githubLogin = login;
+        localStorage.githubToken = token;
+      }
+      callback(err, data);
+    });
   }
 }
 
