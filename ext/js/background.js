@@ -1,5 +1,6 @@
 var currentRequest = null, topResult, currentResults,
-    DB, defaultDB = "https://lackac.cloudant.com/gh-repos";
+    DB, defaultDB = "https://lackac.cloudant.com/gh-repos",
+    privateIndex, privateRepos;
 
 if (localStorage.DB) DB = localStorage.DB;
 if (!DB || DB === "default") DB = defaultDB;
@@ -31,9 +32,16 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 
     for (var i = 0, line; i < lines.length && (line = lines[i]); i++) {
       var _parts = line.split(" "),
-          path = _parts.shift(), watchers = _parts.shift(), description = _parts.join(" ");
+          path = _parts.shift(), watchers = _parts.shift(), description = _parts.join(" "),
+          match;
 
-      description = '<match>' + path + '</match> <dim>' + watchers + '</dim> <dim>' + description + '</dim>';
+      if (path[0] == '*') {
+        match = '<url><match>' + path.substr(1) + '</match></url>';
+      } else {
+        match = '<match>' + path + '</match>';
+      }
+
+      description = match + ' <dim>' + watchers + '</dim> <dim>' + description + '</dim>';
 
       if (i === 0) {
         topResult = path;
@@ -69,6 +77,18 @@ chrome.omnibox.onInputStarted.addListener(function() {
   topResult = null;
   currentResults = [];
   updateDefaultSuggestion('');
+  if (localStorage.includePrivate) {
+    GitHub.updateRepoIndex(function(err) {
+      if (!err) {
+        privateIndex = JSON.parse(localStorage.by_prefix);
+        privateRepos = JSON.parse(localStorage.repos);
+      }
+    });
+    if (localStorage.by_prefix && localStorage.repos) {
+      privateIndex = JSON.parse(localStorage.by_prefix);
+      privateRepos = JSON.parse(localStorage.repos);
+    }
+  }
 });
 
 chrome.omnibox.onInputCancelled.addListener(function() {
@@ -82,6 +102,9 @@ function complete(query, callback) {
 
   return $.get(url, function(lines) {
     lines = lines.split("\n");
+    if (privateIndex && privateIndex[query] && privateRepos) {
+      lines = privateIndex[query].map(function(repo) { return '*' + privateRepos[repo]; }).concat(lines);
+    }
     var uniqLines = [], lookup = {};
     lines.forEach(function(line) {
       var match = line.match(/^\*?([^ ]+) /), id = match && match[1];
@@ -95,6 +118,7 @@ function complete(query, callback) {
 }
 
 function getUrl(path) {
+  if (path[0] == '*') path = path.substr(1);
   return 'https://github.com/' + path;
 }
 
