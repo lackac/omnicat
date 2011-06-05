@@ -62,4 +62,8 @@ h2 {
 }
 #github .hint a { color: #aaa; }
 
+#github #cache-status {
+  font-size: 0.8em;
+}
+
 #github { display: none; }

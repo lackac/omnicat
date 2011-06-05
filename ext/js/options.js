@@ -16,9 +16,31 @@ $(function() {
     if (login && token) {
       tokenValidator.html('<img src="images/loading.gif"/>');
       GitHub.updateCredentials(login, token, function(err) {
+        updateCacheTimestamp()
         tokenValidator.html('<img src="images/' + (err ? 'error' : 'success') + '.gif"/>');
       });
     }
+  });
+
+  function updateCacheTimestamp() {
+    if (localStorage.by_prefix_timestamp) {
+      var t = new Date(localStorage.by_prefix_timestamp - 0);
+      $('#cache-status span').html('generated at <em>'+t.toString().replace(/ GMT.*/, '')+'</em>');
+    } else {
+      $('#cache-status span').text('has not been generated');
+    }
+  }
+
+  $('#cache-status button').bind('click', function() {
+    $('#cache-status span').html('generated at <img src="images/loading.gif"/>');
+    delete localStorage.by_prefix_timestamp;
+    GitHub.updateRepoIndex(function(err) {
+      if (err) {
+        $('#cache-status span').html('generation failed');
+      } else {
+        updateCacheTimestamp();
+      }
+    });
   });
 
   // restore options
@@ -28,4 +50,5 @@ $(function() {
   }
   $('#login').val(localStorage.githubLogin);
   $('#token').val(localStorage.githubToken);
+  updateCacheTimestamp();
 });
