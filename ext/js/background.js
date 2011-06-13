@@ -1,5 +1,5 @@
 var currentRequest = null, topResult, currentResults,
-    DB, defaultDB = "https://lackac.cloudant.com/gh-repos",
+    DB, defaultDB = "https://omnicat.cloudant.com/gh-repos",
     privateIndex, privateRepos;
 
 if (localStorage.DB) DB = localStorage.DB;
