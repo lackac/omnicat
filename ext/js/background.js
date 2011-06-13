@@ -1,20 +1,11 @@
 var currentRequest = null, topResult, currentResults,
-    DB, defaultDB = "https://omnicat.cloudant.com/gh-repos",
     privateIndex, privateRepos;
 
-if (localStorage.DB) DB = localStorage.DB;
-if (!DB || DB === "default") DB = defaultDB;
+// Setup options
+if (!localStorage.index_type) localStorage.index_type = "by_prefix";
 
-function toggleDevMode() {
-  localStorage.devMode = localStorage.devMode === "on" ? "off" : "on";
-  if (localStorage.devMode === "on") {
-    localStorage.DB = DB = "http://localhost:5984/gh-repos";
-    return "enabled";
-  } else {
-    localStorage.DB = "default";
-    DB = defaultDB;
-    return "disabled";
-  }
+function escapeHTML(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
@@ -41,7 +32,7 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
         match = '<match>' + path + '</match>';
       }
 
-      description = match + ' <dim>' + watchers + '</dim> <dim>' + description + '</dim>';
+      description = match + ' <dim>' + watchers + '</dim> <dim>' + escapeHTML(description) + '</dim>';
 
       if (i === 0) {
         topResult = path;
@@ -80,12 +71,12 @@ chrome.omnibox.onInputStarted.addListener(function() {
   if (localStorage.includePrivate) {
     GitHub.updateRepoIndex(function(err) {
       if (!err) {
-        privateIndex = JSON.parse(localStorage.by_prefix);
+        privateIndex = JSON.parse(localStorage[localStorage.index_type]);
         privateRepos = JSON.parse(localStorage.repos);
       }
     });
-    if (localStorage.by_prefix && localStorage.repos) {
-      privateIndex = JSON.parse(localStorage.by_prefix);
+    if (localStorage[localStorage.index_type] && localStorage.repos) {
+      privateIndex = JSON.parse(localStorage[localStorage.index_type]);
       privateRepos = JSON.parse(localStorage.repos);
     }
   }
@@ -95,26 +86,48 @@ chrome.omnibox.onInputCancelled.addListener(function() {
   resetDefaultSuggestion();
 });
 
-function complete(query, callback) {
-  query = query.replace(/^\/|\/$/g, '').toLowerCase();
-  var url = DB + '/_design/repos/_list/complete/by_prefix' +
-    '?startkey=["' + query + '",{}]&endkey=["' + query + '"]&descending=true&limit=10&stale=ok';
-
-  return $.get(url, function(lines) {
-    lines = lines.split("\n");
-    if (privateIndex && privateIndex[query] && privateRepos) {
-      lines = privateIndex[query].map(function(repo) { return '*' + privateRepos[repo]; }).concat(lines);
+function uniqLines(lines) {
+  var uniq = [], lookup = {};
+  lines.forEach(function(line) {
+    var match = line.match(/^\*?([^ ]+) /), id = match && match[1];
+    if (id && !lookup[id]) {
+      lookup[id] = true;
+      uniq.push(line);
     }
-    var uniqLines = [], lookup = {};
-    lines.forEach(function(line) {
-      var match = line.match(/^\*?([^ ]+) /), id = match && match[1];
-      if (id && !lookup[id]) {
-        lookup[id] = true;
-        uniqLines.push(line);
-      }
-    });
-    callback(uniqLines);
   });
+  return uniq;
+}
+
+function complete(query, callback) {
+  if (localStorage.index_type == "by_prefix") {
+    query = query.replace(/^\/|\/$/g, '').toLowerCase();
+  } else {
+    query = query.toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+  var url =
+    (localStorage.DB == "default" ? "https://omnicat.cloudant.com/gh-repos" : localStorage.DB) +
+    '/_design/repos/_list/complete/' +
+    localStorage.index_type +
+    '?startkey=["' + query + '",{}]&endkey=["' + query + '"]' +
+    '&descending=true&limit=10&stale=ok';
+
+  // First gather private repos and send them on immediately
+  var privateLines = [];
+  if (privateIndex && privateIndex[query] && privateRepos) {
+    privateLines = privateIndex[query].map(function(repo) {
+      return '*' + privateRepos[repo];
+    });
+    privateLines = uniqLines(privateLines);
+    callback(privateLines);
+  }
+
+  // Only make the request if there are not enough private repos
+  if (privateLines.length < 6) {
+    return $.get(url, function(lines) {
+      lines = lines.split("\n");
+      callback(uniqLines(privateLines.concat(lines)));
+    });
+  }
 }
 
 function getUrl(path) {
