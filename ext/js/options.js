@@ -23,8 +23,8 @@ $(function() {
   });
 
   function updateCacheTimestamp() {
-    if (localStorage.by_prefix_timestamp) {
-      var t = new Date(localStorage.by_prefix_timestamp - 0);
+    if (localStorage.index_timestamp) {
+      var t = new Date(localStorage.index_timestamp - 0);
       $('#cache-status span').html('generated at <em>'+t.toString().replace(/ GMT.*/, '')+'</em>');
     } else {
       $('#cache-status span').text('has not been generated');
@@ -33,7 +33,7 @@ $(function() {
 
   $('#cache-status button').bind('click', function() {
     $('#cache-status span').html('generated at <img src="images/loading.gif"/>');
-    delete localStorage.by_prefix_timestamp;
+    delete localStorage.index_timestamp;
     GitHub.updateRepoIndex(function(err) {
       if (err) {
         $('#cache-status span').html('generation failed');
