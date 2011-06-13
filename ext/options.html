@@ -30,6 +30,33 @@
           <button>Reload</button>
         </p>
       </div>
+
+      <hr/>
+      <label><input type="checkbox" id="expopts"/> Experimental Options</label>
+      <div id="experimental">
+        <h4>Index Type</h4>
+        <label>
+          <input type="radio" name="index_type" id="index-prefix" value="by_prefix"/>
+          Prefix completion
+        </label>
+        <p class="hint">Example queries for <strong>jashkenas/coffee-script</strong>:<br/><em>coff</em>, <em>jash</em>, <em>j/co</em>, <em>j/coffee-s</em></p>
+        <label>
+          <input type="radio" name="index_type" id="index-fuzzy" value="by_fuzzy"/>
+          Fuzzy completion
+        </label>
+        <p class="hint">Example queries for <strong>jashkenas/coffee-script</strong>:<br/><em>cs</em>, <em>jash</em>, <em>jcs</em>, <em>jacofscr</em></p>
+
+        <h4>Database</h4>
+        <label>
+          <input type="radio" name="db" id="db-default" value="default"/>
+          Default
+        </label>
+        <label>
+          <input type="radio" name="db" id="db-custom" value="custom"/>
+          Custom
+        </label>
+        <input type="text" id="custom-db"/>
+      </div>
     </div>
   </div>
 </body>

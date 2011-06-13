@@ -16,6 +16,12 @@ h2 {
   font-size: 2em;
 }
 
+h4 {
+  clear: both;
+  margin: 1em 0 0.5em;
+  font-size: 1em;
+}
+
 #options {
   margin: 25px auto 0;
   padding: 25px;
@@ -36,7 +42,7 @@ h2 {
   font-weight: bold;
 }
 
-#github input {
+#github input, #experimental input[type="text"] {
   float: left;
   margin: 1em 0 0;
   border: 1px solid #cacaca;
@@ -47,23 +53,29 @@ h2 {
   background-color: #eaeaea;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ffffff), color-stop(1.0, #eaeaea));
 }
+#experimental input[type="text"] {
+  float: none;
+  width: 200px;
+}
+#experimental input[type="text"][disabled] { color: #eee; }
 
 #token-validator {
   float: left;
   margin: 0.75em 0 0 0.5em;
 }
 
-#github .hint {
+.hint {
   clear: both;
-  margin-left: 100px;
   padding-top: 0.5em;
   font-size: 0.8em;
   color: #aaa;
 }
-#github .hint a { color: #aaa; }
+.hint a { color: #aaa; }
+#github .hint { margin-left: 100px; }
+#experimental .hint { margin: 0 0 0.5em 1.5em; }
 
 #github #cache-status {
   font-size: 0.8em;
 }
 
-#github { display: none; }
+#github, #experimental { display: none; }

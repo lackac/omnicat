@@ -43,6 +43,30 @@ $(function() {
     });
   });
 
+  $('#expopts').bind('click', function() {
+    if (this.checked) {
+      localStorage.experimental = "yes";
+      $('#experimental').show();
+    } else {
+      delete localStorage.experimental;
+      $('#experimental').hide();
+    }
+  });
+
+  $('input[name=index_type]').bind('click', function() {
+    localStorage.index_type = $(this).val();
+  });
+
+  $('input[name=db]').bind('click', function() {
+    if ($(this).val() == "default") {
+      localStorage.DB = "default";
+      $('#custom-db').get(0).disabled = true;
+    } else {
+      localStorage.DB = $('#custom-db').val();
+      $('#custom-db').get(0).disabled = false;
+    }
+  });
+
   // restore options
   if (localStorage.includePrivate) {
     $('#include-private').get(0).checked = true;
@@ -51,4 +75,19 @@ $(function() {
   $('#login').val(localStorage.githubLogin);
   $('#token').val(localStorage.githubToken);
   updateCacheTimestamp();
+
+  if (localStorage.experimental) {
+    $('#expopts').get(0).checked = true;
+    $('#experimental').show();
+  }
+  $('input[name=index_type][value='+(localStorage.index_type || "by_prefix")+']').get(0).checked = true;
+  if (localStorage.DB && localStorage.DB != "default") {
+    $('#custom-db').val(localStorage.DB);
+    $('#custom-db').get(0).disabled = false;
+    $('#db-custom').get(0).checked = true;
+  } else {
+    $('#custom-db').val("http://localhost:5984/gh-repos");
+    $('#custom-db').get(0).disabled = true;
+    $('#db-default').get(0).checked = true;
+  }
 });
