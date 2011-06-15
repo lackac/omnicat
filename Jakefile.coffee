@@ -6,7 +6,7 @@ ProgressBar = require 'progress'
 desc "Fetch GitHub repos that have more than 1 watcher"
 task 'fetch', (n, page) ->
   {db} = getDB()
-  n = parseInt(n ? 500)
+  n = parseInt(n ? 750)
   page = parseInt(page ? 1)
   progress = new ProgressBar "[:bar] :percent (:elapseds)", total: n-page-1, width: 60
   console.log "Fetching repo information..."
