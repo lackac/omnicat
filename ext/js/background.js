@@ -1,4 +1,4 @@
-var currentRequest = null, topResult, currentResults,
+var currentRequest = null, requestDelayer, topResult, currentResults,
     privateIndex, privateRepos;
 
 // Setup options
@@ -9,15 +9,10 @@ function escapeHTML(text) {
 }
 
 chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
-  if (currentRequest != null) {
-    currentRequest.abort();
-    currentRequest = null;
-  }
-
   updateDefaultSuggestion(text);
   if (text == '') return;
 
-  currentRequest = complete(text, function(lines) {
+  complete(text, function(lines) {
     topResult = null;
     currentResults = [];
 
@@ -123,10 +118,21 @@ function complete(query, callback) {
 
   // Only make the request if there are not enough private repos
   if (privateLines.length < 6) {
-    return $.get(url, function(lines) {
-      lines = lines.split("\n");
-      callback(uniqLines(privateLines.concat(lines)));
-    });
+    // clear scheduled request
+    if (requestDelayer) clearTimeout(requestDelayer);
+    // schedule new request
+    requestDelayer = setTimeout(function() {
+      requestDelayer = null;
+      if (currentRequest != null) {
+        currentRequest.abort();
+        currentRequest = null;
+      }
+
+      currentRequest = $.get(url, function(lines) {
+        lines = lines.split("\n");
+        callback(uniqLines(privateLines.concat(lines)));
+      });
+    }, 250);
   }
 }
 
