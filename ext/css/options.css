@@ -79,3 +79,13 @@ h4 {
 }
 
 #github, #experimental { display: none; }
+
+footer {
+  margin: 0.5em auto;
+  width: 450px;
+  text-align: left;
+  font-size: 0.75em;
+}
+footer a { color: #368; }
+
+#cloudant { float: right; }
