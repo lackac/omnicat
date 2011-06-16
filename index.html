@@ -28,7 +28,7 @@
     .download { float: right; }
     pre { background: #000; color: #fff; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
+    #cloudant img { vertical-align: middle; }
   </style>
 </head>
 
@@ -46,12 +46,11 @@
       Autocomplete GitHub repositories in Omnibox
     </div>
 
-    <p style="clear: left;">Ever find you have to look at a repository on GitHub you know the
-    name of but not the owner? You go to <a href="https://github.com">github.com</a> or you may
-    already have a search keyword for GitHub in your browser, you enter
-    the name of the repository, wait a few seconds and then try to
-    identify the repository you're looking for in the search
-    results.</p>
+    <p style="clear: left;">Ever find you have to look at a repository
+    on GitHub you know the name of but not the owner? You go to
+    <a href="https://github.com">github.com</a>, enter the name of the
+    repository, wait a few seconds for the search response and then try
+    to identify the repository you're looking for in the results.</p>
 
     <p>This can be easier and quicker. Install this chrome extension and
     start typing <code>gh&lt;tab&gt;</code> in Omnibox (the location bar).
@@ -60,6 +59,12 @@
     the number of watchers and you can even see their descriptions right
     on the spot.  Choose the one you're looking for and you'll be on the
     page of the repository in no time.</p>
+
+    <p>You can even search for your own public and private repositories
+    by entering your GitHub username and token on the options page of
+    the extension. Organization repositories you have access to will be
+    included as well. These repositories will show up at the top of the
+    suggestions.</p>
 
     <p>Much quicker and easier, isn't it? Now go and contribute to open source!</p>
 
@@ -77,9 +82,7 @@
       <pre>$ git clone git://github.com/lackac/omnicat</pre>
     </p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/lackac/omnicat">lackac/omnicat</a>
-    </div>
+    <div id="cloudant">Database hosting provided by <img src="http://static.tumblr.com/mdlmcup/wQNl7b84b/logo-screen-small.png" alt="Cloudant"/></div>
 
   </div>
 
