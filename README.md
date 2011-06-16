@@ -1,10 +1,10 @@
 # Omnicat
 
 Ever find you have to look at a repository on GitHub you know the name
-of but not the owner? You go to [github.com](https://github.com) or you
-may already have a search keyword for GitHub in your browser, you enter
-the name of the repository, wait a few seconds and then try to identify
-the repository you're looking for in the search results.
+of but not the owner? You go to [github.com](https://github.com), enter
+the name of the repository, wait a few seconds for the search response
+and then try to identify the repository you're looking for in the
+results.
 
 This can be easier and quicker. Install this chrome extension and start
 typing `gh<tab>` in Omnibox (the location bar). Anything you type after
