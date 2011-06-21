@@ -100,9 +100,8 @@ function complete(query, callback) {
     query = query.toLowerCase().replace(/[^a-z0-9]/g, '');
   }
   var url =
-    (localStorage.DB == "default" ? "https://omnicat.cloudant.com/gh-repos" : localStorage.DB) +
-    '/_design/repos/_list/complete/' +
-    localStorage.index_type +
+    (!localStorage.DB || localStorage.DB === "default" ? "https://omnicat.cloudant.com/gh-repos" : localStorage.DB) +
+    '/_design/repos/_list/complete/' + localStorage.index_type +
     '?startkey=["' + query + '",{}]&endkey=["' + query + '"]' +
     '&descending=true&limit=10&stale=ok';
 
