@@ -103,7 +103,7 @@ function complete(query, callback) {
     (!localStorage.DB || localStorage.DB === "default" ? "https://omnicat.cloudant.com/gh-repos" : localStorage.DB) +
     '/_design/repos/_list/complete/' + localStorage.index_type +
     '?startkey=["' + query + '",{}]&endkey=["' + query + '"]' +
-    '&descending=true&limit=10&stale=ok';
+    '&descending=true&limit=10&stale=ok&r=1';
 
   // First gather private repos and send them on immediately
   var privateLines = [];
