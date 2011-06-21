@@ -92,6 +92,9 @@ task 'console', ->
   repl = require "repl"
   csl = repl.start()
   global.emit = (k,v) -> console.log(k,v)
+  {couch, db} = getDB()
+  csl.context.couch = couch
+  csl.context.db = db
   csl.context.ddoc = ddoc = require "./design"
   for name,view of ddoc.views
     csl.context[name] = view.map
