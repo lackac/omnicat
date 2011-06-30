@@ -157,5 +157,5 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
       return navigate(getUrl(text));
     }
   }
-  navigate(getUrl(topResult || "search"));
+  navigate(getUrl(topResult || "search?q=" + text));
 });
