@@ -1,3 +1,11 @@
+# 1.1.1 (2011-06-30)
+
+* "Loading" message while a request is in progress
+* "No Results" message if no suggestions can be shown
+* Hitting return on "Loading" or "No Results" navigates to GitHub search
+* Made requests faster a bit
+* Fixed a completion issue when database was undefined
+
 # 1.1 (2011-06-16)
 
 * Added support for private repositories: if the user provides a GitHub

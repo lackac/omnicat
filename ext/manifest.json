@@ -1,6 +1,6 @@
 {
   "name": "Omnicat"
-, "version": "1.1.0"
+, "version": "1.1.1"
 , "description": "Autocomplete GitHub repositories in Omnibox"
 , "icons": {
     "16":  "images/github_icon.png"
