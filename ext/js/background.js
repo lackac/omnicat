@@ -12,9 +12,14 @@ chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
   updateDefaultSuggestion(text);
   if (text == '') return;
 
-  complete(text, function(lines) {
+  complete(text, function(lines, loading) {
     topResult = null;
     currentResults = [];
+
+    if (lines.length === 0) {
+      updateDefaultSuggestion(loading ? "Loading suggestions..." : "No Results");
+      return;
+    }
 
     for (var i = 0, line; i < lines.length && (line = lines[i]); i++) {
       var _parts = line.split(" "),
@@ -112,8 +117,8 @@ function complete(query, callback) {
       return '*' + privateRepos[repo];
     });
     privateLines = uniqLines(privateLines);
-    callback(privateLines);
   }
+  callback(privateLines, privateLines.length < 6);
 
   // Only make the request if there are not enough private repos
   if (privateLines.length < 6) {
