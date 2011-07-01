@@ -22,7 +22,7 @@ Much quicker and easier, isn't it? Now go and contribute to open source!
 
 # Installation
 
-Through [Chrome Web Store](https://chrome.google.com/webstore/developer/detail/hljoheoboihichiahhbkahljbbbjpigg)
+Through [Chrome Web Store](https://chrome.google.com/webstore/detail/hljoheoboihichiahhbkahljbbbjpigg)
 
 # Development
 
